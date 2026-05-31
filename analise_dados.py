@@ -338,3 +338,7 @@ print("\nFINALIZANDO A SPRINT 6: VISUALIZAÇÃO DE DADOS E RESUMO DE INSIGHTS")
 
 # Comando para exibir a janela com os gráficos ao final da execução do script
 plt.show()
+
+# Exportando o DataFrame limpo para um novo arquivo CSV 
+df_trabalhado.to_csv('Base_Varejo_Limpa.csv', sep=';', index=False)
+print("-> Arquivo 'Base_Varejo_Limpa.csv' exportado com sucesso para envio ao GitHub.")
