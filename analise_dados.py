@@ -139,3 +139,36 @@ print("\nFINALIZANDO A SPRINT 3: LIMPEZA DE NULOS, DUPLICATAS E OTIMIZAÇÃO DE 
 # ______________________________________________________________________________________
 # ETAPA 3: Limpeza de Nulos, Duplicatas e Otimização de Atributos -> Fim
 
+# ETAPA 4: Estatística Descritiva -> Início
+# ______________________________________________________________________________________
+print("\nINICIANDO A SPRINT 4: ESTATÍSTICA DESCRITIVA (CL_FHL)")
+
+# Isolando a variável de interesse
+# Utilizado dropna() apenas por segurança matemática, garantindo que o cálculo não quebre
+serie_filhos = df_trabalhado['CL_FHL'].dropna()
+
+# Aplicando as funções estatísticas para obter os parâmetros solicitados
+estatisticas_filhos = {
+    "Contagem": serie_filhos.count(),
+    "Média": round(serie_filhos.mean(), 2),
+    "Mediana": serie_filhos.median(),
+    "Moda": serie_filhos.mode()[0],  # .mode() retorna uma Series, o [0] extrai o número real
+    "Desvio Padrão": round(serie_filhos.std(), 2),
+    "Mínimo": serie_filhos.min(),
+    "Máximo": serie_filhos.max(),
+    "1º Quartil (25%)": serie_filhos.quantile(0.25),
+    "3º Quartil (75%)": serie_filhos.quantile(0.75)
+}
+
+# Exibindo o relatório no terminal
+print("Parâmetros Estatísticos - Número de filhos dos clientes (CL_FHL):")
+for metrica, valor in estatisticas_filhos.items():
+    print(f" -> {metrica}: {valor}")
+
+# Justificativa/Insight Técnico
+print("\n -> INSIGHT ESTATÍSTICO: A diferença entre a Média e a Mediana, junto com o Desvio Padrão, ajuda a entender que a base de clientes é formada predominantemente por indivíduos sem filhos.")
+print("\n -> INSIGHT MERCADOLÓGICO: O varejo pode focar em produtos para adultos e jovens.")
+print("\nFINALIZANDO A SPRINT 4: ESTATÍSTICA DESCRITIVA (CL_FHL)")
+
+# ______________________________________________________________________________________
+# ETAPA 4: Estatística Descritiva -> Fim
