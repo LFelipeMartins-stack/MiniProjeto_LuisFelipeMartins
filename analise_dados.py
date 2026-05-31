@@ -1,5 +1,7 @@
 import pandas as pd
 import re
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # ETAPA 1: Carregar a base e exibir informações estruturais -> Início
 # ______________________________________________________________________________________
@@ -228,3 +230,111 @@ print("\nFINALIZANDO A SPRINT 5: PADRÕES DE AGRUPAMENTO E COMBINAÇÕES")
 # ______________________________________________________________________________________
 # ETAPA 5: Padrões de Agrupamento -> Fim
 
+# ETAPA 6: Visualização de Dados e Resumo de Insights -> Início
+# ______________________________________________________________________________________
+print("\nINICIANDO A SPRINT 6: VISUALIZAÇÃO DE DADOS E RESUMO DE INSIGHTS")
+
+# Configurando o estilo visual dos gráficos para um padrão mais limpo e legível
+sns.set_theme(style="whitegrid")
+
+# Criando uma grade de 2x2 para acomodar 4 gráficos (Dashboards)
+fig, axes = plt.subplots(2, 2, figsize=(16, 10))
+fig.suptitle('Dashboard Analítico - Base Varejo', fontsize=18, fontweight='bold')
+
+# Gráfico 1: Vendas por Categoria (Barplot) 
+top5_cat = vendas_por_categoria.head(5).reset_index()
+# Renomeando colunas para facilitar o plot
+top5_cat.columns = ['Categoria', 'Volume']
+# Captura o total de TODAS as vendas para calcular o percentual real da loja
+total_vendas_loja = vendas_por_categoria.sum()
+sns.barplot(data=top5_cat, x='Categoria', y='Volume', ax=axes[0, 0], hue='Categoria', palette='viridis', legend=False)
+axes[0, 0].set_title('Top 5 Categorias (Volume e % do Total)', fontweight='bold')
+axes[0, 0].set_ylabel('Quantidade')
+axes[0, 0].set_xlabel('')
+# Aumenta o limite do eixo Y em 15% para que o texto duplo não corte no topo
+axes[0, 0].set_ylim(0, top5_cat['Volume'].max() * 1.15)
+# Adiciona os rótulos de dados customizados (Quantidade e Percentual)
+for container in axes[0, 0].containers:
+    # Pega os valores numéricos reais de cada barra
+    valores = container.datavalues
+    # Cria uma lista de textos formatados com quebra de linha (\n)
+    rotulos = [f'{int(v)}\n({(v/total_vendas_loja)*100:.1f}%)' if v > 0 else '' for v in valores]
+    axes[0, 0].bar_label(container, labels=rotulos, padding=3, fontsize=9, fontweight='bold')
+
+# Gráfico 2: Compras por Gênero (Barplot)
+gen_df = compras_por_genero.reset_index()
+gen_df.columns = ['Gênero', 'Compras Unicas']
+sns.barplot(data=gen_df, x='Gênero', y='Compras Unicas', ax=axes[0, 1], hue='Gênero', palette='pastel', legend=False)
+axes[0, 1].set_title('Volume de Idas ao Caixa por Gênero', fontweight='bold')
+axes[0, 1].set_ylabel('Cupons Fiscais')
+axes[0, 1].set_xlabel('')
+
+# Gráfico 3: Distribuição do Número de Filhos (Histograma)
+sns.histplot(serie_filhos, bins=5, kde=False, ax=axes[1, 0], color='skyblue')
+axes[1, 0].set_title('Perfil Familiar: Distribuição do Número de Filhos', fontweight='bold')
+axes[1, 0].set_ylabel('Frequência de Clientes')
+axes[1, 0].set_xlabel('Quantidade de Filhos (CL_FHL)')
+
+# Gráfico 4: Sazonalidade Pura (Volume Consolidado por Mês do Ano)
+df_trabalhado['MES'] = df_trabalhado['DATA'].dt.month
+sazonalidade_pura = df_trabalhado.groupby('MES')['CO_ID'].nunique().reset_index()
+meses_map = {
+    1:'Jan', 2:'Fev', 3:'Mar', 4:'Abr', 5:'Mai', 6:'Jun', 
+    7:'Jul', 8:'Ago', 9:'Set', 10:'Out', 11:'Nov', 12:'Dez'
+}
+sazonalidade_pura['NOME_MES'] = sazonalidade_pura['MES'].map(meses_map)
+# Gráfico de barras (barplot) para evidenciar claramente os meses de pico
+sns.barplot(data=sazonalidade_pura, x='NOME_MES', y='CO_ID', ax=axes[1, 1], hue='NOME_MES', palette='autumn', legend=False)
+axes[1, 1].set_title('Sazonalidade Pura: Compras Históricas por Mês', fontweight='bold')
+axes[1, 1].set_ylabel('Total de Compras Únicas')
+axes[1, 1].set_xlabel('')
+# Valores numéricos no topo de cada barra para clareza extrema
+for i in axes[1, 1].containers:
+    axes[1, 1].bar_label(i, padding=3, fmt='%d', fontsize=9)
+
+# Ajusta o layout para nada ficar sobreposto
+plt.tight_layout()
+# Salva a imagem gerada na mesma pasta do projeto em alta resolução (300 DPI) e remove as margens brancas
+plt.savefig('Dashboard_Varejo.png', dpi=300, bbox_inches='tight')
+# Limpeza da coluna temporária
+df_trabalhado.drop(columns=['MES'], inplace=True)
+
+# IMPRESSÃO DO RESUMO EXECUTIVO (INSIGHTS FINAIS)
+print("\n" + "="*70)
+print("🎯 RESUMO EXECUTIVO DE INSIGHTS (CONCLUSÕES DA ANÁLISE)")
+print("="*70)
+print("""
+1. PERFIL FAMILIAR DOMINANTE: 
+   - A estatística descritiva provou que a grande maioria dos clientes ativos 
+     não possui filhos (Mediana e Moda = 0). O foco de expansão de portfólio 
+     deve ser em produtos para o público jovem adulto, solteiros ou casais sem filhos.
+
+2. LEI DE PARETO (CURVA ABC) NAS CATEGORIAS:
+   - Uma parcela muito pequena do portfólio de categorias domina o volume de vendas 
+     de ponta a ponta. A gestão de estoque deve focar na prevenção de ruptura (falta de 
+     produto) exclusivamente desse 'Top 5', pois elas sustentam o giro da loja.
+     ALIMENTOS, HIGIENE e LIMPEZA representam a 'Curva A' de produtos, responsáveis por mais de 80% do volume total.
+
+3. CONVERSÃO E DIRECIONAMENTO DE MARKETING (GÊNERO):
+   - Os dados de 'Compras Únicas' (idas ao caixa) revelam uma conversão superior 
+     para o gênero feminino. Isso exige que o tom de voz das campanhas publicitárias e 
+     a vitrine da loja física sejam direcionados primariamente para esse público.
+
+4. SAZONALIDADE OPERACIONAL:
+   - A análise temporal detectou picos e vales claros no movimento da loja. 
+     Isso afeta diretamente o RH: a escala de operadores de caixa e repositores 
+     deve ser flexível, sendo reforçada estritamente nesses meses de pico.
+
+5. INTEGRIDADE DA BASE DE DADOS (DATA QUALITY):
+   - A base bruta estava comprometida com registros de IDs nulos e colunas extras 
+     ocultas. Se as métricas tivessem sido geradas sem a etapa de higienização (ETL), 
+     o faturamento e o volume de vendas teriam sido inflados de forma irreal.
+""")
+print("="*70 + "\n")
+
+print("\nFINALIZANDO A SPRINT 6: VISUALIZAÇÃO DE DADOS E RESUMO DE INSIGHTS")
+# ______________________________________________________________________________________
+# ETAPA 6: Visualização de Dados e Resumo de Insights -> Fim
+
+# Comando para exibir a janela com os gráficos ao final da execução do script
+plt.show()
