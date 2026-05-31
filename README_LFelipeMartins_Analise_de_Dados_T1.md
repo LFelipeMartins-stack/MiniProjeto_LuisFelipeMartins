@@ -12,6 +12,19 @@ Os dados utilizados neste projeto são provenientes de um histórico transaciona
 * **Formato:** `.csv` (Delimitador: Ponto e vírgula `;`)
 * **Volume Inicial:** 830.000 registros e 14 colunas.
 
+## 🛠️ Tecnologias e Ferramentas Utilizadas
+- **Python 3:** Linguagem base do projeto.
+- **Pandas:** Para modelagem de dados, tratamento de nulos, agregações (`groupby`, `pivot_table`) e ETL.
+- **Expressões Regulares (Regex):** Aplicadas via módulo `re` para higienização profunda de strings e padronização.
+- **Matplotlib & Seaborn:** Para a construção do dashboard analítico e visualização da sazonalidade.
+
+## 🚀 Como Executar o Projeto
+
+1. Certifique-se de ter o Python e o `pip` instalados no ambiente virtual.
+2. Instale as dependências executando o comando:
+   ```bash
+   pip install pandas matplotlib seaborn
+
 ## 🎯 Reflexão Teórica e Insights de Negócio
 
 Após o processamento e a limpeza rigorosa de mais de 830 mil registros brutos, a análise estruturada revelou padrões críticos de consumo que direcionam as decisões estratégicas da loja:
@@ -35,16 +48,3 @@ O cruzamento temporal dos dados confirmou que a loja não possui um fluxo linear
 ### 5. O Impacto da Qualidade dos Dados (Data Quality)
 Antes de qualquer inferência, o script removeu 96.553 linhas duplicadas e filtrou IDs nulos. 
 * **Reflexão Teórica:** Se o processo de ETL (Extração, Transformação e Carga) não tivesse sido aplicado com as regras de negócio corretas, todas as métricas acima estariam corrompidas. O faturamento e o volume de vendas teriam sido reportados de forma irreal para a diretoria, provando que um dado sujo gera uma decisão gerencial equivocada.
-
-## 🛠️ Tecnologias e Ferramentas Utilizadas
-- **Python 3:** Linguagem base do projeto.
-- **Pandas:** Para modelagem de dados, tratamento de nulos, agregações (`groupby`, `pivot_table`) e ETL.
-- **Expressões Regulares (Regex):** Aplicadas via módulo `re` para higienização profunda de strings e padronização.
-- **Matplotlib & Seaborn:** Para a construção do dashboard analítico e visualização da sazonalidade.
-
-## 🚀 Como Executar o Projeto
-
-1. Certifique-se de ter o Python e o `pip` instalados no ambiente virtual.
-2. Instale as dependências executando o comando:
-   ```bash
-   pip install pandas matplotlib seaborn
