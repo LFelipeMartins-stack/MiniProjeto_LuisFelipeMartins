@@ -175,40 +175,56 @@ print("\nFINALIZANDO A SPRINT 4: ESTATÍSTICA DESCRITIVA (CL_FHL)")
 
 # ETAPA 5: Padrões de Agrupamento -> Início
 # ______________________________________________________________________________________
-print("\nINICIANDO A SPRINT 5: PADRÕES DE AGRUPAMENTO (GROUPBY)")
+print("\nINICIANDO A SPRINT 5: PADRÕES DE AGRUPAMENTO (GROUPBY) E COMBINAÇÕES")
 
 # Agrupamento 1: Volume de Compras Únicas por Gênero
 # Objetivo: Responder "quem compra mais?"
-# Técnica: Usado nunique() no CO_ID para contar Recibos/Cupons Fiscais únicos, 
-# pois uma mesma compra pode ter várias linhas (produtos).
 compras_por_genero = df_trabalhado.groupby('CL_GENERO')['CO_ID'].nunique().sort_values(ascending=False)
-
 print("\n1. Volume de Compras Únicas por Gênero:")
 print(compras_por_genero)
 print(" -> INSIGHT 1: Este dado revela qual gênero possui a maior taxa de conversão (idas ao caixa), direcionando campanhas de marketing.")
 
 # Agrupamento 2: Top Categorias Mais Vendidas (Volume de Itens)
 # Objetivo: Responder "quais categorias vendem mais?"
-# Técnica: Usado count() no PR_ID pois cada linha representa uma unidade de produto vendida.
 vendas_por_categoria = df_trabalhado.groupby('PR_CAT')['PR_ID'].count().sort_values(ascending=False)
-
 print("\n2. Top 5 Categorias com Maior Volume de Itens Vendidos:")
 print(vendas_por_categoria.head(5))
 print(" -> INSIGHT 2: Aponta a 'Curva A' de produtos da loja, fundamental para a gestão de estoque e reposição.")
 
 # Agrupamento 3: Vendas ao Longo do Tempo (Mensal)
 # Objetivo: Responder "como variam as vendas ao longo do tempo?" 
-# Técnica: Criado uma coluna temporária 'ANO_MES' usando a propriedade .dt do Pandas
 df_trabalhado['ANO_MES'] = df_trabalhado['DATA'].dt.to_period('M')
 vendas_por_mes = df_trabalhado.groupby('ANO_MES')['CO_ID'].nunique().sort_values(ascending=False)
-
 print("\n3. Top 5 Meses com Maior Fluxo de Compras (Sazonalidade):")
 print(vendas_por_mes.head(5))
 print(" -> INSIGHT 3: Identifica os picos sazonais de venda, auxiliando no planejamento financeiro e contratação de temporários.")
 
+# IMPLEMENTAÇÃO DAS COMBINAÇÕES
+print("\nCOMBINAÇÕES DE AGRUPAMENTOS E VARIÁVEIS PARA EXPLORAÇÃO DE PADRÕES CRUZADOS:")
+
+# Combinação 1: Tabela Dinâmica (Gênero x Categoria)
+combinacao_genero_categoria = pd.pivot_table(
+    df_trabalhado, 
+    values='PR_ID',           
+    index='PR_CAT',           
+    columns='CL_GENERO',      
+    aggfunc='count',          
+    fill_value=0              
+)
+combinacao_genero_categoria['TOTAL'] = combinacao_genero_categoria.sum(axis=1)
+combinacao_genero_categoria = combinacao_genero_categoria.sort_values(by='TOTAL', ascending=False)
+print("\n4. COMBINAÇÃO 1: Tabela Dinâmica de Vendas por Categoria e Gênero (Top 5):")
+print(combinacao_genero_categoria.head(5))
+
+# Combinação 2: Agrupamento Duplo (Tempo x Segmento)
+compras_tempo_segmento = df_trabalhado.groupby(['ANO_MES', 'CL_SEG'])['CO_ID'].nunique().unstack(fill_value=0)
+print("\n5. COMBINAÇÃO 2: Fluxo de Compras por Tempo e Segmento (Últimos 3 meses):")
+print(compras_tempo_segmento.tail(3))
+
 # Limpeza: Remover a coluna temporária ANO_MES para manter o DataFrame limpo
 df_trabalhado.drop(columns=['ANO_MES'], inplace=True)
 
-print("\nFINALIZANDO A SPRINT 5: PADRÕES DE AGRUPAMENTO (GROUPBY)")
+print("\nFINALIZANDO A SPRINT 5: PADRÕES DE AGRUPAMENTO E COMBINAÇÕES")
 # ______________________________________________________________________________________
 # ETAPA 5: Padrões de Agrupamento -> Fim
+
