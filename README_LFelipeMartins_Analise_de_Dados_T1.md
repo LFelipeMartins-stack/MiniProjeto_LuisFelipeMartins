@@ -4,6 +4,13 @@ Este repositório contém o pipeline completo de Análise Exploratória de Dados
 
 O projeto aplica técnicas de higienização de dados, estatística descritiva e combinações de agrupamento para extrair inteligência de negócios a partir de um histórico de compras.
 
+## 🗄️ Sobre a Base de Dados
+
+Os dados utilizados neste projeto são provenientes de um histórico transacional de varejo. O arquivo bruto (`Base Varejo.csv`) contém dados demográficos de clientes e informações de compra de produtos.
+
+* **Fonte Oficial:** [Base Varejo - Kaggle](https://www.kaggle.com/datasets/namespaiva/base-varejo/data)
+* **Formato:** `.csv` (Delimitador: Ponto e vírgula `;`)
+* **Volume Inicial:** 830.000 registros e 14 colunas.
 
 ## 🎯 Reflexão Teórica e Insights de Negócio
 
