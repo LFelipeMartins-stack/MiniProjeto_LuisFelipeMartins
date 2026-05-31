@@ -92,3 +92,50 @@ print(df_trabalhado.head())
 print("\nFINALIZANDO A SPRINT 2: TRANSFORMAÇÕES E LIMPEZA COM REGEX")
 # ______________________________________________________________________________________
 # ETAPA 2: Transformação de Strings, Integer, Float e Datetime -> Fim
+
+# ETAPA 3: Limpeza de Nulos, Duplicatas e Otimização de Atributos -> Início
+# ______________________________________________________________________________________
+print("\nINICIANDO A SPRINT 3: LIMPEZA DE NULOS, DUPLICATAS E OTIMIZAÇÃO DE ATRIBUTOS")
+
+# Tratamento de Nulos e Lógica Condicional
+def preencher_categoria(cat):
+    """Lógica if/else exigida para preencher categorias vazias"""
+    if pd.isna(cat) or str(cat).strip() == "":
+        return "SEM CATEGORIA"
+    else:
+        return cat
+
+df_trabalhado['PR_CAT'] = df_trabalhado['PR_CAT'].apply(preencher_categoria)
+print("Condicional aplicada: Valores vazios em 'PR_CAT' substituídos por 'SEM CATEGORIA'.")
+# Justificativa técnica: Tratar corretamente os nulos das dimensões físicas, justificando a escolha.."
+print(" -> JUSTIFICATIVA: A base 'Varejo' não possui colunas de dimensões físicas (peso, altura, etc.). O tratamento de nulos foi focado nas variáveis de negócio.")
+
+# Regras de Negócio e Datas
+# Validação da regra do identificador de número de compra separando registros nulos
+nulos_antes = df_trabalhado.shape[0]
+df_trabalhado.dropna(subset=['CO_ID'], inplace=True)
+registros_removidos = nulos_antes - df_trabalhado.shape[0]
+print(f"\nRegra de Negócio: {registros_removidos} registros com ID de Compra (CO_ID) nulo foram removidos.")
+
+# Limpeza de Duplicatas
+duplicatas = df_trabalhado.duplicated().sum()
+print(f"\nForam encontradas {duplicatas} linhas duplicadas na base. Como não há um ID único para cada produto, a remoção de duplicatas é necessária para garantir a qualidade dos dados.")
+if duplicatas > 0:
+    df_trabalhado.drop_duplicates(inplace=True)
+    print(" -> Duplicatas removidas com sucesso.")
+
+# Seleção de Atributos (Remoção de Colunas Irrelevantes para os Objetivos)
+# Mapeamento técnico: CL_EC (Estado Civil) não possui aderência aos objetivos de entrega
+if 'CL_EC' in df_trabalhado.columns:
+    df_trabalhado.drop(columns=['CL_EC'], inplace=True)
+    print("\nOtimização: Coluna 'CL_EC' (Estado Civil) removida por não possuir mapeamento com os objetivos do desafio e ocupar memória desnecessariamente.")
+
+# Verificando os valores após a limpeza de nulos e duplicatas
+print("\nRESUMO APÓS A SPRINT 3 (QUALIDADE DOS DADOS):")
+print(f"\nColunas e valores finais:\n{df_trabalhado.head()}")
+print(f"\nValores nulos por coluna:\n{df_trabalhado.isnull().sum()}")
+print(f"\nRegistros finais limpos e prontos para análise: {df_trabalhado.shape[0]}")
+print("\nFINALIZANDO A SPRINT 3: LIMPEZA DE NULOS, DUPLICATAS E OTIMIZAÇÃO DE ATRIBUTOS")
+# ______________________________________________________________________________________
+# ETAPA 3: Limpeza de Nulos, Duplicatas e Otimização de Atributos -> Fim
+
