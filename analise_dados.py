@@ -101,8 +101,10 @@ print("\nINICIANDO A SPRINT 3: LIMPEZA DE NULOS, DUPLICATAS E OTIMIZAÇÃO DE AT
 
 # Tratamento de Nulos e Lógica Condicional
 def preencher_categoria(cat):
-    """Lógica if/else exigida para preencher categorias vazias"""
-    if pd.isna(cat) or str(cat).strip() == "":
+    # Converte para string e limpa espaços para garantir a captura idêntica
+    cat_str = str(cat).strip().upper()
+    
+    if pd.isna(cat) or cat_str == "" or cat_str == "#N/D" or cat_str == "NAN":
         return "SEM CATEGORIA"
     else:
         return cat
